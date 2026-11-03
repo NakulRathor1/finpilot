@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Investments · FinPilot</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/investment.css">
+</head>
+
+<body class="dark">
+    <div class="layout">
+        <aside class="sidebar">
+            <a class="brand" href="/dashboard">Fin<span>Pilot</span></a>
+            <nav class="nav">
+                <a href="/dashboard">Overview</a>
+                <a href="/budget">Budget & Transactions</a>
+                <a class="active" href="/investments" aria-current="page">Investments</a>
+                <a href="/goals">Goals & Savings</a>
+                <a href="/bills">Bills & Subscriptions</a>
+                <a href="/reports">Reports</a>
+            </nav>
+            <div class="side-bottom">
+                <span class="user-label muted">Personal finance workspace</span>
+                <button class="secondary" id="themeBtn" type="button">◐ Theme</button>
+                <button class="secondary" id="logoutBtn" type="button">↪ Sign out</button>
+            </div>
+        </aside>
+        <main class="main investment-main">
+            <header class="topbar investment-topbar">
+                <div>
+                    <div class="eyebrow">INVESTMENT MANAGEMENT</div>
+                    <h1 class="heading">Your <span class="investment-accent">Investment Portfolio.</span></h1>
+                    <p class="subheading">Track holdings, average cost, profit and loss, and refresh market quotes when available.</p>
+                </div>
+                <div class="actions">
+                    <button class="secondary" id="refreshPricesBtn" type="button">↻ Refresh prices</button>
+                    <button id="addInvestmentBtn" type="button">+ Add Investment</button>
+                </div>
+            </header>
+            <section class="grid stats investment-summary">
+                <article class="card">
+                    <div class="stat-label">Total Invested</div>
+                    <div class="stat-value" id="totalInvested">₹0</div>
+                </article>
+                <article class="card">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value" id="currentValue">₹0</div>
+                </article>
+                <article class="card">
+                    <div class="stat-label">Total Profit / Loss</div>
+                    <div class="stat-value" id="totalProfit">₹0</div>
+                </article>
+                <article class="card">
+                    <div class="stat-label">Overall Return</div>
+                    <div class="stat-value" id="overallReturn">0%</div>
+                </article>
+            </section>
+            <article class="card portfolio-section">
+                <div class="section-head">
+                    <div>
+                        <h2>My Portfolio</h2>
+                        <p>Edit, buy more, sell, or view history for each holding.</p>
+                    </div>
+                    <button class="secondary" type="button" onclick="loadInvestments()">↻ Refresh</button>
+                </div>
+                <div id="investmentList" class="investment-list">
+                    <div class="empty-investments">
+                        <h3>No investments yet</h3>
+                        <p>Add your first investment to start tracking your portfolio.</p>
+                    </div>
+                </div>
+            </article>
+            <section class="grid two analytics-section">
+                <article class="card analytics-card">
+                    <h2>Category Performance</h2>
+                    <div id="categoryPerformance"></div>
+                </article>
+                <article class="card analytics-card">
+                    <h2>Portfolio Distribution</h2>
+                    <div id="portfolioDistribution"></div>
+                </article>
+            </section>
+            <article class="card ai-investment-section">
+                <div class="section-head">
+                    <div>
+                        <div class="eyebrow">FINPILOT AI</div>
+                        <h2>Portfolio Intelligence</h2>
+                        <p>Analysis of allocation, performance, and concentration.</p>
+                    </div>
+                    <button type="button" onclick="analyzePortfolio()">✦ Analyze My Portfolio</button>
+                </div>
+                <div id="aiResult" class="ai-result">Add investments and click analyze to get your portfolio insights.</div>
+            </article>
+        </main>
+    </div>
+
+    <!-- Add / Edit Investment -->
+    <div id="investmentModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2 id="modalTitle">Add Investment</h2>
+                <button class="secondary modal-close" type="button" data-close-modal="investmentModal" aria-label="Close">×</button>
+            </div>
+            <form id="investmentForm" class="investment-form">
+                <input type="hidden" id="investmentId" value="">
+                <input type="hidden" id="quoteSource" value="manual">
+                <div class="field search-field span2">
+                    <label for="assetName">Asset name</label>
+                    <input id="assetName" required placeholder="Start typing e.g. Reliance, Gold, Bitcoin" autocomplete="off">
+                    <div id="marketSearchResults" class="search-results"></div>
+                </div>
+                <div class="field">
+                    <label for="assetType">Asset type</label>
+                    <select id="assetType" required>
+                        <option>Stocks</option>
+                        <option>Gold</option>
+                        <option>Silver</option>
+                        <option>Mutual Funds</option>
+                        <option>Bonds</option>
+                        <option>Crypto</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="assetSymbol">Symbol (optional)</label>
+                    <div class="symbol-row">
+                        <input id="assetSymbol" placeholder="e.g. RELIANCE.NS">
+                        <button type="button" class="secondary" id="fetchQuoteBtn">Quote</button>
+                    </div>
+                    <small id="quoteStatus" class="muted">Quotes are best-effort delayed market data. Gold/silver: enter INR prices manually.</small>
+                </div>
+                <div class="field" id="quantityField">
+                    <label for="assetQuantity">Quantity</label>
+                    <input id="assetQuantity" type="number" step="0.0001" min="0.0001">
+                </div>
+                <div class="field" id="buyPriceField">
+                    <label for="buyPrice">Buy price per unit (₹)</label>
+                    <input id="buyPrice" type="number" step="0.01" min="0.01">
+                </div>
+                <div class="field">
+                    <label for="currentPrice">Current price per unit (₹)</label>
+                    <input id="currentPrice" type="number" step="0.01" min="0.01" required>
+                </div>
+                <div class="field" id="purchaseDateField">
+                    <label for="purchaseDate">Purchase date</label>
+                    <input id="purchaseDate" type="date">
+                </div>
+                <button class="span2" id="submitInvestmentBtn" type="submit">Add Investment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Buy / Sell -->
+    <div id="tradeModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2 id="tradeTitle">Trade</h2>
+                <button class="secondary modal-close" type="button" data-close-modal="tradeModal" aria-label="Close">×</button>
+            </div>
+            <p id="tradeHint" class="muted" style="margin-top:0"></p>
+            <form id="tradeForm" class="investment-form">
+                <input type="hidden" id="tradeAction" value="buy">
+                <div class="field">
+                    <label for="tradeQuantity">Quantity</label>
+                    <input id="tradeQuantity" type="number" step="0.0001" min="0.0001" required>
+                </div>
+                <div class="field">
+                    <label for="tradePrice">Price per unit (₹)</label>
+                    <input id="tradePrice" type="number" step="0.01" min="0.01" required>
+                </div>
+                <div class="field">
+                    <label for="tradeDate">Date</label>
+                    <input id="tradeDate" type="date" required>
+                </div>
+                <div class="field">
+                    <label for="tradeNotes">Notes (optional)</label>
+                    <input id="tradeNotes" placeholder="Optional note">
+                </div>
+                <button class="span2" type="submit">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- History -->
+    <div id="historyModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2 id="historyTitle">History</h2>
+                <button class="secondary modal-close" type="button" data-close-modal="historyModal" aria-label="Close">×</button>
+            </div>
+            <div id="historyBody"></div>
+        </div>
+    </div>
+
+    <div id="investmentToast" class="investment-toast toast"></div>
+    <script src="/common.js"></script>
+    <script src="/investment.js"></script>
+</body>
+
+</html>

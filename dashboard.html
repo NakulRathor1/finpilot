@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - FinPilot</title>
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+
+<div class="dashboard-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <span>◉</span> FinPilot
+        </div>
+
+
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="active"><span>⌂</span> Overview</a>
+            <a href="/budget"><span>↔</span> Budget & Transactions</a>
+            <a href="/investments"><span>📈</span> Investments</a>
+            <a href="/goals"><span>◎</span> Goals & Savings</a>
+            <a href="/bills"><span>▣</span> Bills & Subscriptions</a>
+            <a href="/reports"><span>◔</span> Reports</a>
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button id="themeToggle" class="sidebar-theme">
+                ☀️ Theme
+            </button>
+
+            <a href="/logout" class="logout-link">
+                <span>↪</span>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-main">
+
+
+        <!-- HEADER -->
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <p class="dashboard-label">
+                    PERSONAL FINANCE DASHBOARD
+                </p>
+
+                <h1>
+                    Welcome, <span id="userName">User</span> 👋
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Here's your financial overview.
+                </p>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-avatar" id="profileAvatar">
+                    U
+                </div>
+
+                <div>
+                    <strong id="profileName">
+                        User
+                    </strong>
+
+                    <small>
+                        FinPilot Member
+                    </small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary-grid">
+
+
+            <div class="summary-card balance-summary">
+
+                <div class="summary-top">
+                    <span>Total Balance</span>
+                    <div class="summary-icon">₹</div>
+                </div>
+
+                <h2 id="totalBalance">
+                    ₹0
+                </h2>
+
+                <small>
+                    Income minus expenses
+                </small>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span>Total Income</span>
+                    <div class="summary-icon income-icon">↑</div>
+                </div>
+
+                <h2 id="totalIncome">
+                    ₹0
+                </h2>
+
+                <small>
+                    All recorded income
+                </small>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span>Total Expenses</span>
+                    <div class="summary-icon expense-icon">↓</div>
+                </div>
+
+                <h2 id="totalExpenses">
+                    ₹0
+                </h2>
+
+                <small>
+                    All recorded expenses
+                </small>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span>This Month Savings</span>
+                    <div class="summary-icon savings-icon">✓</div>
+                </div>
+
+                <h2 id="totalSavings">
+                    ₹0
+                </h2>
+
+                <small id="savingsRate">
+                    0% savings rate
+                </small>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+                    <span>Investments</span>
+                    <div class="summary-icon">📈</div>
+                </div>
+
+                <h2 id="investmentValue">
+                    ₹0
+                </h2>
+
+                <small id="investmentGain">
+                    Unrealized P/L
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- TOP CONTENT -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- CHART -->
+
+            <div class="dashboard-card chart-card" id="analytics">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Spending Overview</h3>
+                        <p>Your spending by category</p>
+                    </div>
+
+                    <select id="chartFilter">
+                        <option value="all">All Time</option>
+                        <option value="month">This Month</option>
+                    </select>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="spendingChart"></canvas>
+
+                    <div id="chartEmpty" class="empty-chart">
+                        Add expenses to see your spending chart.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HEALTH -->
+
+            <div class="dashboard-card health-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Financial Health</h3>
+                        <p>Your current financial score</p>
+                    </div>
+
+                </div>
+
+
+                <div class="health-score">
+
+                    <div class="score-circle">
+
+                        <span id="healthScore">
+                            0
+                        </span>
+
+                        <small>
+                            /100
+                        </small>
+
+                    </div>
+
+                    <div>
+                        <strong id="healthLabel">
+                            Getting Started
+                        </strong>
+
+                        <p id="healthMessage">
+                            Add income and expenses to calculate your score.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="health-bar">
+                    <span id="healthBar"></span>
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- TRANSACTIONS + BUDGET -->
+
+        <section class="dashboard-grid second-grid">
+
+
+            <div class="dashboard-card" id="transactions">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Recent Transactions</h3>
+                        <p>Your latest financial activity</p>
+                    </div>
+
+                    <button class="small-button" id="openTransactionModal">
+                        + Add
+                    </button>
+
+                </div>
+
+
+                <div id="transactionsList" class="transactions-list">
+
+                    <div class="empty-state">
+                        No transactions yet.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card" id="budgets">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Monthly Budget</h3>
+                        <p>Set your overall spending limit</p>
+                    </div>
+
+                </div>
+
+
+                <div class="budget-amount">
+
+                    <span id="budgetSpent">
+                        ₹0
+                    </span>
+
+                    <small>
+                        spent
+                    </small>
+
+                </div>
+
+
+                <div class="budget-progress">
+                    <span id="budgetProgress"></span>
+                </div>
+
+
+                <div class="budget-footer">
+
+                    <span id="budgetStatus">
+                        No budget set
+                    </span>
+
+                    <a class="small-button" href="/budget">Manage Budgets</a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- GOALS -->
+
+        <section class="dashboard-card goals-card" id="goals">
+
+            <div class="card-header">
+
+                <div>
+                    <h3>Savings Goals</h3>
+                    <p>Track what you're working toward</p>
+                </div>
+
+                <button class="small-button" id="openGoalModal">
+                    + New Goal
+                </button>
+
+            </div>
+
+
+            <div id="goalsList" class="goals-grid">
+
+                <div class="empty-state">
+                    No savings goals yet.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- INSIGHT -->
+
+        <section class="insight-card">
+
+            <div class="insight-icon">
+                ✦
+            </div>
+
+            <div>
+
+                <span>
+                    FINPILOT INSIGHT
+                </span>
+
+                <h3 id="insightTitle">
+                    Your financial journey starts here.
+                </h3>
+
+                <p id="insightText">
+                    Add your first income and expense to start receiving
+                    useful financial insights.
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- TRANSACTION MODAL -->
+
+<div id="transactionModal" class="modal">
+
+    <div class="modal-box">
+
+        <button class="modal-close" data-close="transactionModal">
+            ×
+        </button>
+
+        <h2>Add Transaction</h2>
+
+        <p>
+            Record your income or expense.
+        </p>
+
+
+        <form id="transactionForm">
+
+            <label>
+                Type
+            </label>
+
+            <select id="transactionType" required>
+
+                <option value="expense">
+                    Expense
+                </option>
+
+                <option value="income">
+                    Income
+                </option>
+
+            </select>
+
+
+            <label>
+                Description
+            </label>
+
+            <input
+                id="transactionName"
+                type="text"
+                placeholder="e.g. Groceries"
+                required
+            >
+
+
+            <label>
+                Category
+            </label>
+
+            <select id="transactionCategory" required>
+
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Education">Education</option>
+                <option value="Salary">Salary</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Investment">Investment</option>
+                <option value="Other">Other</option>
+
+            </select>
+
+
+            <label>
+                Amount (₹)
+            </label>
+
+            <input
+                id="transactionAmount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="0.00"
+                required
+            >
+
+
+            <label>
+                Date
+            </label>
+
+            <input
+                id="transactionDate"
+                type="date"
+                required
+            >
+
+
+            <button type="submit" class="auth-button">
+                Save Transaction
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- GOAL MODAL -->
+
+<div id="goalModal" class="modal">
+
+    <div class="modal-box">
+
+        <button class="modal-close" data-close="goalModal">
+            ×
+        </button>
+
+        <h2>Create Savings Goal</h2>
+
+        <p>
+            Give yourself something worth saving for.
+        </p>
+
+
+        <form id="goalForm">
+
+            <label>
+                Goal Name
+            </label>
+
+            <input
+                id="goalName"
+                type="text"
+                placeholder="e.g. New Laptop"
+                required
+            >
+
+
+            <label>
+                Target Amount (₹)
+            </label>
+
+            <input
+                id="goalTarget"
+                type="number"
+                min="1"
+                step="0.01"
+                placeholder="e.g. 60000"
+                required
+            >
+
+
+            <label>
+                Already Saved (₹)
+            </label>
+
+            <input
+                id="goalSaved"
+                type="number"
+                min="0"
+                step="0.01"
+                value="0"
+            >
+
+
+            <label>
+                Deadline
+            </label>
+
+            <input
+                id="goalDeadline"
+                type="date"
+            >
+
+
+            <button type="submit" class="auth-button">
+                Create Goal
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="/common.js"></script>
+<script src="/dashboard.js"></script>
+
+</body>
+</html>
